@@ -5,37 +5,27 @@ from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 import plotly.express as px
 
-# -------------------------------------------------
 # Page Configuration
-# -------------------------------------------------
 st.set_page_config(
     page_title="Customer Segmentation Dashboard",
     layout="wide"
 )
 
-# -------------------------------------------------
 # Theme Toggle
-# -------------------------------------------------
 theme = st.sidebar.radio("🎨 Theme Mode", ["Light", "Dark"])
 
-# -------------------------------------------------
 # Title
-# -------------------------------------------------
 st.title("🧠 Customer Segmentation Dashboard")
 st.caption("Interactive K-Means Clustering & Customer Behavior Analysis")
 
-# -------------------------------------------------
 # Load Data
-# -------------------------------------------------
 @st.cache_data
 def load_data():
     return pd.read_csv("Mall_Customers.csv")
 
 df = load_data()
 
-# -------------------------------------------------
 # Sidebar Controls
-# -------------------------------------------------
 st.sidebar.header("⚙️ Clustering Controls")
 
 feature_map = {
@@ -56,17 +46,13 @@ if len(selected_features) < 2:
 
 k = st.sidebar.slider("Number of Clusters (k)", 2, 10, 5)
 
-# -------------------------------------------------
 # Prepare Features
-# -------------------------------------------------
 X = df[[feature_map[f] for f in selected_features]]
 
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
-# -------------------------------------------------
 # KMeans Model
-# -------------------------------------------------
 kmeans = KMeans(
     n_clusters=k,
     init="k-means++",
@@ -75,17 +61,13 @@ kmeans = KMeans(
 
 df["Cluster"] = kmeans.fit_predict(X_scaled)
 
-# -------------------------------------------------
 # Metrics
-# -------------------------------------------------
 c1, c2, c3 = st.columns(3)
 c1.metric("Total Customers", len(df))
 c2.metric("Features Used", len(selected_features))
 c3.metric("Clusters", k)
 
-# -------------------------------------------------
 # Visualization
-# -------------------------------------------------
 st.subheader("📈 Cluster Visualization")
 
 if len(selected_features) == 2:
@@ -108,9 +90,7 @@ else:
 
 st.plotly_chart(fig, width="stretch")
 
-# -------------------------------------------------
 # Cluster Distribution
-# -------------------------------------------------
 fig_bar = px.histogram(
     df,
     x="Cluster",
@@ -121,9 +101,7 @@ fig_bar = px.histogram(
 
 st.plotly_chart(fig_bar, width="stretch")
 
-# -------------------------------------------------
 # Summary Table
-# -------------------------------------------------
 st.subheader("📌 Cluster Summary")
 
 summary = (
@@ -134,9 +112,7 @@ summary = (
 
 st.dataframe(summary, width="stretch")
 
-# -------------------------------------------------
 # Download
-# -------------------------------------------------
 csv = df.to_csv(index=False).encode("utf-8")
 
 st.download_button(
@@ -146,9 +122,7 @@ st.download_button(
     "text/csv"
 )
 
-# -------------------------------------------------
 # Insights
-# -------------------------------------------------
 st.subheader("💡 Business Insights")
 
 st.markdown("""
@@ -159,8 +133,6 @@ st.markdown("""
 - **Moderate behavior** → Regular customers  
 """)
 
-# -------------------------------------------------
 # Footer
-# -------------------------------------------------
 st.markdown("---")
 st.markdown("👤 **P. Vaishnavi** | Aspiring Data Analyst | Machine Learning Enthusiast")
